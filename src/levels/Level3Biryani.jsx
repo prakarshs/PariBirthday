@@ -286,8 +286,8 @@ export default function Level3Biryani({ onComplete }) {
             <p
               style={{ marginBottom: 16, fontSize: "1.05rem", lineHeight: 1.5 }}
             >
-              Customers walk up with orders. Tap the toppings they asked for,
-              then hit <strong>Serve</strong>. Faster = more rupees.
+              Customers walk up with their orders. Tap the dishes they asked for,
+              then hit <strong>Serve</strong>.<br/> Faster = more rupees.
             </p>
             <p
               className="hand"
