@@ -74,17 +74,21 @@ export default function Level2Color({ onComplete }) {
       <div className="level__stage">
         <div className="color-stage">
           <div>
-            <div className="color-swatch" style={{ background: hslCss(target.h, target.s, target.l) }} />
-            <div className="color-swatch__lbl"></div>
+            <div
+                className="color-swatch"
+                style={{ background: hslCss(target.h, target.s, target.l) }}
+            />
+            <div className="color-swatch__lbl">match this</div>
           </div>
+
           <div>
             <motion.div
-              className="color-swatch"
-              animate={{ background: hslCss(h, s, l) }}
-              transition={{ duration: 0.1 }}
-              style={{ background: hslCss(h, s, l) }}
+                className="color-swatch"
+                animate={{ background: hslCss(h, s, l) }}
+                transition={{ duration: 0.1 }}
+                style={{ background: hslCss(h, s, l) }}
             />
-            <div className="color-swatch__lbl"></div>
+            <div className="color-swatch__lbl">your color</div>
           </div>
         </div>
 
