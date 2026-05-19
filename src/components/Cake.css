@@ -1,0 +1,16 @@
+.cake-wrap {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  filter: drop-shadow(0 12px 24px rgba(106, 76, 147, 0.15));
+}
+
+.cake-wrap--compact {
+  filter: drop-shadow(0 6px 12px rgba(106, 76, 147, 0.12));
+}
+
+.cake-svg {
+  max-width: 100%;
+  height: auto;
+}
