@@ -1,4 +1,4 @@
-# 🎂 Birthday Cake Builder
+# 🎂 Birthday Cake game
 
 An interactive 16th birthday cake-building game. Six personality-themed mini-games each add a new layer to a growing cake, finishing with a lit cake, a stats scorecard, and a heartfelt birthday message.
 
