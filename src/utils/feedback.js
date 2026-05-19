@@ -42,9 +42,9 @@ const color = [
 
   { min: 70, msg: "aankhon ka calibration thoda hil gaya 😭" },
 
-  { min: 60, msg: "rangilo maaro dholna... guess aapse ho na 😌" },
+  { min: 60, msg: "eye-promise aap isse behtar kar sakte ho" },
 
-  { min: 50, msg: "yeh rang iss brahmand mein kahin toh hoga 🤔" },
+  { min: 50, msg: "rangilo maaro dholna... guess aapse ho na 😌" },
 
   { min: 0, msg: "nayi prajaati discover ho gayi 😭" },
 ];
