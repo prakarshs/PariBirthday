@@ -147,21 +147,58 @@ const handleTap = (idx) => {
       Math.round(((round - 1) / ROUNDS_TO_WIN) * 100)
     );
 
-    setPhase('done');
+    const highMsgs = [
+      "Kya baat, kya baat, KYA BAAT 💃✨",
+      "Mudra department impressed hai 😌",
+      "Grace levels illegal ho rahe hain 👀",
+      "Arangetram arc loading ✨",
+      "Ancestors standing ovation de rahe hain 😭",
+      "Yeh practice ka result lag raha hai 💃",
+    ];
+
+    const midMsgs = [
+      "Purvaj khush honge... mostly 😌",
+      "Haath kuch toh sahi kar rahe the 👀",
+      "Grace aur chaos ka balance tha 😭",
+      "Ghoongroo abhi tak survive kar gaye ✨",
+      "Kaafi smooth tha honestly 😌",
+      "Body memory ne thoda carry kar diya 👀",
+    ];
+
+    const lowMsgs = [
+      "Ghoongroo bach gaye, izzat thodi kam 😭",
+      "Mudra ne bhi socha yeh kya ho raha hai 👀",
+      "Thoda dance, kaafi confusion 😭",
+      "Haath aur dimaag alag teams mein the 😭",
+      "Coordination chhutti pe gaya hua tha 👀",
+      "Energy thi... direction thodi kam thi 😌",
+    ];
+
+    const failMsgs = [
+      "Brain abhi warm-up kar raha tha 😭",
+      "Mudra ne bhi resignation socha 👀",
+      "Prabhu deva ne call cut kar diya 😭",
+      "System boot ho raha tha 😶",
+      "Haath ne apni marzi chala di 😭",
+      "Round shuru hote hi khatam 😭",
+    ];
+
+    const rand = (arr) =>
+        arr[Math.floor(Math.random() * arr.length)];
 
     let msg = '';
 
     if (round >= 7) {
-      msg = 'Kya baat, Kya baat, KYA BAAT !';
+      msg = rand(highMsgs);
     }
     else if (round >= 5) {
-      msg = 'Purvaj khush honge... mostly 😌';
+      msg = rand(midMsgs);
     }
     else if (round >= 3) {
-      msg = 'Ghoongroo bach gaye, izzat thodi kam 😭';
+      msg = rand(lowMsgs);
     }
     else {
-      msg = 'Brain abhi warm-up kar raha tha 😭';
+      msg = rand(failMsgs);
     }
 
     setComment(msg);
@@ -264,8 +301,11 @@ const handleTap = (idx) => {
             style={{ textAlign: 'center', maxWidth: 460 }}
           >
             <p style={{ marginBottom: 12, lineHeight: 1.5 }}>
-              Four classical hand gestures will light up in a sequence.
-              Repeat them in order. Each round adds one. Make it to <strong>{ROUNDS_TO_WIN}</strong>.
+              <p>
+                Four Bharatanatyam hand mudras will light up one by one 💃<br/>
+                Watch the order carefully, then tap the same gestures in the exact sequence.<br/>
+                Every round adds one more move, so the pattern keeps getting longer.
+              </p>Make it to <strong>{ROUNDS_TO_WIN}</strong>.
             </p>
             <p className="hand" style={{ color: 'var(--plum)', fontSize: '1.2rem' }}>
               dancer ki yaddasht activate !

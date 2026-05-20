@@ -4,9 +4,9 @@ import { Sound } from '../utils/sound.js';
 import './Intro.css';
 
 const LINES = [
-  "Ek birthday cake sirf maida aur cheeni se thodi banta hai...",
-  "Usme daalni padti hai memories, talents, food obsessions aur thoda sa weirdness ✨",
-  "chalo, tumhara wala banate hain 🎂"
+  "Aaj hum ek cake banayenge...",
+  "Par ingredients kitchen se nahi aayenge; woh aayenge tumse. Tumhari favourite cheezein, talents, little habits aur woh saari details jo tumhe... tum banati hain ✨",
+  "Har level us cake ka ek naya layer banayega... chalo shuru karein 🎂"
 ];
 
 export default function Intro({ onStart }) {

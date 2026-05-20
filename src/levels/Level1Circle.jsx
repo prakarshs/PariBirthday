@@ -309,7 +309,7 @@ export default function Level1Circle({ onComplete }) {
               animate={{ opacity: [0.4, 0.9, 0.4] }}
               transition={{ duration: 2.2, repeat: Infinity }}
             >
-              start anywhere · draw around the dot
+              kahi se bhi start karo · draw around the dot
             </motion.div>
           )}
         </div>

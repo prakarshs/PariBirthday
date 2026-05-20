@@ -24,7 +24,7 @@ const circle = [
 
   { min: 50, msg: "abstract territory mein ghus rahe hain 👀" },
 
-  { min: 45, msg: "bhai yeh cloud kaise ban gaya 😭" },
+  { min: 45, msg: "bhai yeh baadal kaise ban gaya 😭" },
 
   { min: 40, msg: "amoeba vibes aa rahi hain 🦠" },
 
@@ -35,18 +35,33 @@ const circle = [
 
 const color = [
   { min: 95, msg: "Rangon ke jadugar nikle aap 🪄" },
+  { min: 95, msg: "Aandhi banke aaya ho 🎉" },
+  { min: 95, msg: "Yeh suspiciously accurate tha 😭✨" },
 
-  { min: 90, msg: "Pantone wale location maang rahe hain 👀" },
+  { min: 90, msg: "Asian paints wale location maang rahe hain 👀" },
+  { min: 90, msg: "Color picker ne naukri chhod di 😌" },
+  { min: 90, msg: "Picasso bhi impress ho gaya ✨" },
 
-  { min: 80, msg: "kaafi close tha honestly 😌" },
+  { min: 80, msg: "Kaafi close tha honestly 😌" },
+  { min: 80, msg: "Bas thoda sa idhar udhar tha 👀" },
+  { min: 80, msg: "Aur chalao mobile 😭" },
 
-  { min: 70, msg: "aankhon ka calibration thoda hil gaya 😭" },
+  { min: 70, msg: "aAankhon ka calibration thoda hil gaya 😭" },
+  { min: 70, msg: "Thoda rang, thoda andaza 😌" },
+  { min: 70, msg: "Niyat sahi thi 😭" },
 
-  { min: 60, msg: "eye-promise aap isse behtar kar sakte ho" },
+  { min: 60, msg: "Eye-promise aap isse behtar kar sakte ho" },
+  { min: 60, msg: "Rang toh tha... bas woh wala nahi 😭" },
+  { min: 60, msg: "Aankhon ko software update chahiye 👀" },
 
-  { min: 50, msg: "rangilo maaro dholna... guess aapse ho na 😌" },
+  { min: 50, msg: "Rangilo maaro dholna... guess aapse ho na 😌" },
+  { min: 50, msg: "Arre bhai bhai bhai..." },
+  { min: 50, msg: "Creative interpretation bol dete hain ✨" },
 
-  { min: 0, msg: "nayi prajaati discover ho gayi 😭" },
+  { min: 0, msg: "Apko dua aur dawa dono ki zaroorat hai 😭" },
+  { min: 0, msg: "Rang dekh ke physics bhi confuse ho gayi 😭" },
+  { min: 0, msg: "Bas 100-200 ka farak hai 👀" },
+  { min: 0, msg: "Color theory ne aankh band kar li 😭" },
 ];
 
 const biryaniHype = [

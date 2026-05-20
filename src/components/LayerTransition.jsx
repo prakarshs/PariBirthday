@@ -11,7 +11,7 @@ const LAYER_BLURBS = [
   { title: 'khaana peena layer', sub: 'with extra leg piece' },
   { title: 'jalwe layer', sub: 'graceful arc unlocked' },
   { title: 'gaana bajana layer', sub: 'shor sharaba' },
-  { title: 'sushi and sakura crown', sub: 'the final piece' }
+  { title: 'japani and chill layer', sub: 'the final piece' }
 ];
 
 export default function LayerTransition({ layers, score, comment, onContinue }) {

@@ -175,7 +175,7 @@ export default function Level6Quiz({ onComplete }) {
     <div className="level">
       <div className="level__header">
         <span className="level__chip">level 6 · Japani</span>
-        <h1 className="level__title">Quick quiz</h1>
+        <h1 className="level__title">Kya apka joota hai Japani?</h1>
         <div className="quiz-progress">
           {questions.map((_, i) => (
             <div

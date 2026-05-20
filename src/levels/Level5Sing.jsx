@@ -220,7 +220,7 @@ export default function Level5Sing({ onComplete }) {
             style={{ textAlign: 'center', maxWidth: 460 }}
           >
             <p style={{ marginBottom: 12, lineHeight: 1.5 }}>
-              The needle follows your voice volume. Keep it in the
+              The needle follows your voice volume. <br/>Keep it in the
               <strong style={{ color: 'var(--yellow)' }}> yellow zone</strong> for a total
               of <strong>{TARGET_SECONDS} seconds</strong> within {TOTAL_DURATION}.
               You can hum, sing, cheekh bhi sakte ho — anything steady.

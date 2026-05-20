@@ -22,7 +22,7 @@ const ITEMS = [
 
   {
     id: "pizza",
-    label: "Pizza Slice",
+    label: "Pizza",
     icon: "🍕",
     color: "#E85A4F",
   },
@@ -286,8 +286,8 @@ export default function Level3Biryani({ onComplete }) {
             <p
               style={{ marginBottom: 16, fontSize: "1.05rem", lineHeight: 1.5 }}
             >
-              Customers walk up with their orders. Tap the dishes they asked for,
-              then hit <strong>Serve</strong>.<br/> Faster = more rupees.
+              Customers walk up with their orders.<br/> Look at what they're asking for, tap the same dishes below, then hit <strong>Serve</strong>.<br/>
+              Correct orders earn money 💸 Faster serving = more rupees.
             </p>
             <p
               className="hand"
