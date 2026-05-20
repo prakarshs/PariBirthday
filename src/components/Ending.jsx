@@ -555,7 +555,7 @@ export default function Ending({ scores }) {
 
                 <div className="booth__actions">
                   <button className="btn" onClick={handleDownload} disabled={downloading}>
-                    {downloading ? 'saving...' : '⬇  save keepsake'}
+                    {downloading ? 'saving...' : 'save postcard'}
                   </button>
                   <button className="btn btn--ghost" onClick={retakePhoto}>
                     📸 retake photo
