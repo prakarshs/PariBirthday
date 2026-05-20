@@ -254,17 +254,60 @@ export default function Level3Biryani({ onComplete }) {
     Sound.click();
     // score is rupees / GOAL_RUPEES * 100, capped 100
     const score = Math.min(100, Math.round((state.rupees / GOAL_RUPEES) * 100));
-    const comment =
-      state.rupees >= GOAL_RUPEES
-        ? "Michelin star incoming ⭐"
-        : state.rupees >= GOAL_RUPEES * 0.7
-          ? "Kitchen me mahayuddh ka ant hua"
-          : state.rupees >= GOAL_RUPEES * 0.4
-            ? "Customers ate, you tried"
-            : "Google reviews incoming 📝";
-    onComplete({ score, comment, stat: "biryani" });
-  };
+    const successMsgs = [
+      "Michelin star incoming ⭐",
+      "Chef ne aaj kitchen bacha li 😭",
+      "Customer ne 5-star de diya ✨",
+      "Cash register khushi se ro raha hai 💸",
+      "Restaurant arc OP ho gaya 🍽️",
+      "Aaj business ud raha hai 🚀",
+    ];
 
+    const midMsgs = [
+      "Kitchen me mahayuddh ka ant hua 😭",
+      "Chef ne somehow sambhaal liya 😌",
+      "Thoda chaos, thoda profit 👀",
+      "Kitchen energy: controlled panic 😭",
+      "Sab jalte jalte bach gaya 😭",
+      "Customer abhi bhi wapas aa sakta hai 😌",
+    ];
+
+    const lowMsgs = [
+      "Customers ate, you tried 😭",
+      "Customer ka trust ki duniya hil gayi 👀",
+      "Chef ka aatm-vishwas fluctuate kar raha hai 📉",
+      "Aaj toh bhagwan bharose chal raha tha 😭",
+      "Khana gaya... reputation bhi saath le gaya 😭",
+      "Kitchen ne apni poori koshish kari 😌",
+    ];
+
+    const failMsgs = [
+      "Google reviews incoming 📝",
+      "Customer side-eye deke chala gaya 😭",
+      "Chef ne resignation draft khol liya 👀",
+      "Yeh restaurant tha ya survival challenge 😭",
+      "Manager currently unavailable 😶",
+      "Customer ne ghar jaake maggi bana li 😭",
+    ];
+
+    const rand = (arr) =>
+        arr[Math.floor(Math.random() * arr.length)];
+
+    const comment =
+        state.rupees >= GOAL_RUPEES
+            ? rand(successMsgs)
+            : state.rupees >= GOAL_RUPEES * 0.7
+                ? rand(midMsgs)
+                : state.rupees >= GOAL_RUPEES * 0.4
+                    ? rand(lowMsgs)
+                    : rand(failMsgs);
+
+    onComplete({
+      score,
+      comment,
+      stat: "biryani"
+    });
+  };
   if (!started) {
     return (
       <div className="level">
