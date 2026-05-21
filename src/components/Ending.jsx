@@ -24,8 +24,6 @@ const STAT_DEFS = [
   { key: 'music', label: 'Music Aura', icon: '🎶' }
 ];
 
-// Each filter has BOTH a CSS string (for live preview) AND a JS pixel function
-// (for the captured photo, since mobile browsers ignore ctx.filter)
 const FILTERS = [
   {
     key: 'none', label: 'Au naturel', emoji: '✨',
@@ -37,17 +35,9 @@ const FILTERS = [
     css: 'saturate(1.3) contrast(0.95) brightness(1.1)',
     apply: (d) => {
       for (let i = 0; i < d.length; i += 4) {
-        // Brightness *1.1, contrast *0.95, saturate *1.3
-        let r = d[i], g = d[i+1], b = d[i+2];
-        r *= 1.1; g *= 1.1; b *= 1.1;
-        r = (r - 128) * 0.95 + 128;
-        g = (g - 128) * 0.95 + 128;
-        b = (b - 128) * 0.95 + 128;
-        const gray = 0.3*r + 0.59*g + 0.11*b;
-        r = gray + (r - gray) * 1.3;
-        g = gray + (g - gray) * 1.3;
-        b = gray + (b - gray) * 1.3;
-        d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
+        d[i]     = Math.min(255, d[i]     * 1.08 + 8);
+        d[i + 1] = Math.min(255, d[i + 1] * 1.05 + 6);
+        d[i + 2] = Math.min(255, d[i + 2] * 1.10 + 10);
       }
     }
   },
@@ -56,21 +46,10 @@ const FILTERS = [
     css: 'sepia(0.55) contrast(1.05) brightness(1.05) saturate(1.2)',
     apply: (d) => {
       for (let i = 0; i < d.length; i += 4) {
-        let r = d[i], g = d[i+1], b = d[i+2];
-        // Sepia 55%
-        const tr = 0.393*r + 0.769*g + 0.189*b;
-        const tg = 0.349*r + 0.686*g + 0.168*b;
-        const tb = 0.272*r + 0.534*g + 0.131*b;
-        r = r * 0.45 + tr * 0.55;
-        g = g * 0.45 + tg * 0.55;
-        b = b * 0.45 + tb * 0.55;
-        // Brightness 1.05
-        r *= 1.05; g *= 1.05; b *= 1.05;
-        // Contrast 1.05
-        r = (r - 128) * 1.05 + 128;
-        g = (g - 128) * 1.05 + 128;
-        b = (b - 128) * 1.05 + 128;
-        d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
+        const r = d[i], g = d[i + 1], b = d[i + 2];
+        d[i]     = Math.min(255, r * 0.7 + g * 0.4 + b * 0.2);
+        d[i + 1] = Math.min(255, r * 0.5 + g * 0.65 + b * 0.2);
+        d[i + 2] = Math.min(255, r * 0.35 + g * 0.4 + b * 0.4);
       }
     }
   },
@@ -79,10 +58,9 @@ const FILTERS = [
     css: 'grayscale(1) contrast(1.3) brightness(0.95)',
     apply: (d) => {
       for (let i = 0; i < d.length; i += 4) {
-        const gray = 0.3*d[i] + 0.59*d[i+1] + 0.11*d[i+2];
-        let v = gray * 0.95;
-        v = (v - 128) * 1.3 + 128;
-        d[i] = d[i+1] = d[i+2] = clamp(v);
+        const gray = d[i] * 0.299 + d[i + 1] * 0.587 + d[i + 2] * 0.114;
+        const c = Math.min(255, Math.max(0, (gray - 128) * 1.3 + 128 - 12));
+        d[i] = d[i + 1] = d[i + 2] = c;
       }
     }
   },
@@ -91,24 +69,9 @@ const FILTERS = [
     css: 'sepia(0.3) saturate(1.6) hue-rotate(-15deg) brightness(1.1)',
     apply: (d) => {
       for (let i = 0; i < d.length; i += 4) {
-        let r = d[i], g = d[i+1], b = d[i+2];
-        // Light sepia 30%
-        const tr = 0.393*r + 0.769*g + 0.189*b;
-        const tg = 0.349*r + 0.686*g + 0.168*b;
-        const tb = 0.272*r + 0.534*g + 0.131*b;
-        r = r * 0.7 + tr * 0.3;
-        g = g * 0.7 + tg * 0.3;
-        b = b * 0.7 + tb * 0.3;
-        // Warm shift (approximating hue-rotate(-15deg))
-        r *= 1.15; b *= 0.9;
-        // Brightness 1.1
-        r *= 1.1; g *= 1.1; b *= 1.1;
-        // Saturate 1.6
-        const gray = 0.3*r + 0.59*g + 0.11*b;
-        r = gray + (r - gray) * 1.6;
-        g = gray + (g - gray) * 1.6;
-        b = gray + (b - gray) * 1.6;
-        d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
+        d[i]     = Math.min(255, d[i]     * 1.25 + 20);
+        d[i + 1] = Math.min(255, d[i + 1] * 1.05 + 5);
+        d[i + 2] = Math.min(255, d[i + 2] * 0.85);
       }
     }
   },
@@ -117,22 +80,9 @@ const FILTERS = [
     css: 'saturate(1.4) hue-rotate(330deg) brightness(1.15) contrast(0.95)',
     apply: (d) => {
       for (let i = 0; i < d.length; i += 4) {
-        let r = d[i], g = d[i+1], b = d[i+2];
-        // Pink shift (approximating hue-rotate(330deg) which is -30deg)
-        r = r * 1.1 + 10;
-        b = b * 1.05 + 5;
-        // Brightness 1.15
-        r *= 1.15; g *= 1.15; b *= 1.15;
-        // Contrast 0.95
-        r = (r - 128) * 0.95 + 128;
-        g = (g - 128) * 0.95 + 128;
-        b = (b - 128) * 0.95 + 128;
-        // Saturate 1.4
-        const gray = 0.3*r + 0.59*g + 0.11*b;
-        r = gray + (r - gray) * 1.4;
-        g = gray + (g - gray) * 1.4;
-        b = gray + (b - gray) * 1.4;
-        d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
+        d[i]     = Math.min(255, d[i]     * 1.15 + 25);
+        d[i + 1] = Math.min(255, d[i + 1] * 1.05 + 10);
+        d[i + 2] = Math.min(255, d[i + 2] * 1.10 + 18);
       }
     }
   },
@@ -141,21 +91,10 @@ const FILTERS = [
     css: 'saturate(2) hue-rotate(180deg) contrast(1.2)',
     apply: (d) => {
       for (let i = 0; i < d.length; i += 4) {
-        let r = d[i], g = d[i+1], b = d[i+2];
-        // Hue rotate 180deg = swap warm/cool (approximate by swapping R<->B emphasis)
-        const newR = b;
-        const newB = r;
-        r = newR; b = newB;
-        // Contrast 1.2
-        r = (r - 128) * 1.2 + 128;
-        g = (g - 128) * 1.2 + 128;
-        b = (b - 128) * 1.2 + 128;
-        // Saturate 2
-        const gray = 0.3*r + 0.59*g + 0.11*b;
-        r = gray + (r - gray) * 2;
-        g = gray + (g - gray) * 2;
-        b = gray + (b - gray) * 2;
-        d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
+        const r = d[i], b = d[i + 2];
+        d[i]     = Math.min(255, Math.max(0, (b - 128) * 1.2 + 128));
+        d[i + 1] = Math.min(255, Math.max(0, (d[i + 1] - 128) * 1.2 + 128));
+        d[i + 2] = Math.min(255, Math.max(0, (r - 128) * 1.2 + 128));
       }
     }
   },
@@ -164,30 +103,53 @@ const FILTERS = [
     css: 'hue-rotate(90deg) saturate(3) contrast(1.4) invert(0.1)',
     apply: (d) => {
       for (let i = 0; i < d.length; i += 4) {
-        let r = d[i], g = d[i+1], b = d[i+2];
-        // Hue rotate 90deg approx: R->G, G->B, B->R cycle
-        const nr = b, ng = r, nb = g;
-        r = nr; g = ng; b = nb;
-        // Invert 10%
-        r = r * 0.9 + (255 - r) * 0.1;
-        g = g * 0.9 + (255 - g) * 0.1;
-        b = b * 0.9 + (255 - b) * 0.1;
-        // Contrast 1.4
-        r = (r - 128) * 1.4 + 128;
-        g = (g - 128) * 1.4 + 128;
-        b = (b - 128) * 1.4 + 128;
-        // Saturate 3
-        const gray = 0.3*r + 0.59*g + 0.11*b;
-        r = gray + (r - gray) * 3;
-        g = gray + (g - gray) * 3;
-        b = gray + (b - gray) * 3;
-        d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
+        const r = d[i], g = d[i + 1], b = d[i + 2];
+        let nr = b, ng = r, nb = g;
+        const avg = (nr + ng + nb) / 3;
+        nr = Math.min(255, Math.max(0, avg + (nr - avg) * 2.5));
+        ng = Math.min(255, Math.max(0, avg + (ng - avg) * 2.5));
+        nb = Math.min(255, Math.max(0, avg + (nb - avg) * 2.5));
+        d[i]     = nr * 0.9 + (255 - nr) * 0.1;
+        d[i + 1] = ng * 0.9 + (255 - ng) * 0.1;
+        d[i + 2] = nb * 0.9 + (255 - nb) * 0.1;
       }
     }
   }
 ];
 
-const clamp = (v) => Math.max(0, Math.min(255, v));
+// Helper: attach stream to video element and ensure it plays.
+// Returns a promise that resolves when video is actually playing with frames.
+async function attachStreamAndPlay(video, stream) {
+  if (!video || !stream) return false;
+
+  if (video.srcObject !== stream) {
+    video.srcObject = stream;
+  }
+
+  try {
+    await video.play();
+  } catch (err) {
+    console.warn('video.play() rejected:', err);
+  }
+
+  // Wait until we actually have frames (videoWidth > 0)
+  if (video.videoWidth > 0) return true;
+
+  return new Promise((resolve) => {
+    let resolved = false;
+    const done = () => {
+      if (resolved) return;
+      resolved = true;
+      video.removeEventListener('loadedmetadata', done);
+      video.removeEventListener('canplay', done);
+      resolve(video.videoWidth > 0);
+    };
+    video.addEventListener('loadedmetadata', done);
+    video.addEventListener('canplay', done);
+    // Safety timeout
+    setTimeout(done, 2000);
+  });
+}
 
 export default function Ending({ scores }) {
   const [phase, setPhase] = useState('lighting');
@@ -205,6 +167,7 @@ export default function Ending({ scores }) {
   const streamRef = useRef(null);
   const postcardRef = useRef(null);
 
+  // Initial cake + music + confetti
   useEffect(() => {
     Sound.startEndingMusic();
     Sound.layerAdd();
@@ -231,6 +194,7 @@ export default function Ending({ scores }) {
     };
   }, []);
 
+  // Final-line typewriter
   useEffect(() => {
     if (phase !== 'message') return;
     if (lineIdx >= FINAL_LINES.length) return;
@@ -252,36 +216,46 @@ export default function Ending({ scores }) {
     return () => clearTimeout(t);
   }, [phase, lineIdx]);
 
-  // Start camera when entering booth (and re-attach on retake)
+  // Manage camera lifecycle based on boothStep
+  // - Entering 'camera': make sure stream is live and attached
+  // - Leaving booth entirely: stop the camera
+  // We do NOT stop the camera when transitioning camera → countdown (same stream is reused)
   useEffect(() => {
-    if (phase === 'booth' && boothStep === 'camera') {
-      // If we still have a live stream, just re-attach it (retake case)
-      if (streamRef.current && videoRef.current) {
-        attachStream();
-      } else {
-        startCamera();
-      }
+    if (phase !== 'booth') return;
+
+    if (boothStep === 'camera' || boothStep === 'countdown') {
+      ensureCamera();
     }
+  }, [phase, boothStep]);
+
+  // When the video element itself mounts/remounts (e.g. after retake), re-attach the stream.
+  // This runs after the JSX rendering, so videoRef.current is guaranteed to exist.
+  useEffect(() => {
+    if (!videoRef.current) return;
+    if (!streamRef.current) return;
+    attachStreamAndPlay(videoRef.current, streamRef.current);
+  }, [boothStep]);
+
+  useEffect(() => {
     return () => {
       if (phase !== 'booth') stopCamera();
     };
-  }, [phase, boothStep]);
+  }, [phase]);
 
-  const attachStream = async () => {
-    const video = videoRef.current;
-    if (!video || !streamRef.current) return;
-
-    video.srcObject = streamRef.current;
-
-    // iOS Safari needs explicit play() after re-attaching
-    try {
-      await video.play();
-    } catch (err) {
-      console.warn('video.play() rejected:', err);
+  const ensureCamera = async () => {
+    // If we already have a live stream, just re-attach it to the (possibly new) video element
+    if (
+        streamRef.current &&
+        streamRef.current.getTracks().some((t) => t.readyState === 'live')
+    ) {
+      if (videoRef.current) {
+        await attachStreamAndPlay(videoRef.current, streamRef.current);
+      }
+      setCameraError(null);
+      return;
     }
-  };
 
-  const startCamera = async () => {
+    // Otherwise, request a new stream
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 720 } },
@@ -289,12 +263,7 @@ export default function Ending({ scores }) {
       });
       streamRef.current = stream;
       if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        try {
-          await videoRef.current.play();
-        } catch (err) {
-          console.warn('video.play() rejected:', err);
-        }
+        await attachStreamAndPlay(videoRef.current, stream);
       }
       setCameraError(null);
     } catch (err) {
@@ -311,6 +280,9 @@ export default function Ending({ scores }) {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((t) => t.stop());
       streamRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
     }
   };
 
@@ -344,14 +316,12 @@ export default function Ending({ scores }) {
     const sx = (vw - minDim) / 2;
     const sy = (vh - minDim) / 2;
 
-    // Mirror + draw video
     ctx.save();
     ctx.translate(size, 0);
     ctx.scale(-1, 1);
     ctx.drawImage(video, sx, sy, minDim, minDim, 0, 0, size, size);
     ctx.restore();
 
-    // Apply JS-based pixel filter (works on all browsers including mobile)
     if (filter.apply) {
       try {
         const imageData = ctx.getImageData(0, 0, size, size);
@@ -362,17 +332,17 @@ export default function Ending({ scores }) {
       }
     }
 
-    const dataUrl = canvas.toDataURL('image/png');
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
     console.log('Captured photo size:', dataUrl.length, 'bytes');
 
     setPhotoDataUrl(dataUrl);
+    stopCamera();
     Sound.fanfare();
     burst(window.innerWidth / 2, window.innerHeight / 2, { count: 50, power: 1 });
     setBoothStep('postcard');
-    // Note: we DON'T stopCamera here, so retake can reuse the stream
   };
 
-  const capturePhoto = () => {
+  const capturePhoto = async () => {
     const video = videoRef.current;
 
     if (!video) {
@@ -383,19 +353,15 @@ export default function Ending({ scores }) {
 
     if (!video.videoWidth || !video.videoHeight) {
       console.warn('Video not ready, attempting recovery. videoWidth:', video.videoWidth);
-      if (streamRef.current && !video.srcObject) {
-        video.srcObject = streamRef.current;
-        video.play().catch(() => {});
+      if (streamRef.current) {
+        await attachStreamAndPlay(video, streamRef.current);
       }
-      setTimeout(() => {
-        const v = videoRef.current;
-        if (v && v.videoWidth && v.videoHeight) {
-          doCapture(v);
-        } else {
-          console.error('Video still not ready, going to postcard without photo');
-          setBoothStep('postcard');
-        }
-      }, 400);
+      if (video.videoWidth && video.videoHeight) {
+        doCapture(video);
+      } else {
+        console.error('Video still not ready, going to postcard without photo');
+        setBoothStep('postcard');
+      }
       return;
     }
 
@@ -576,6 +542,7 @@ export default function Ending({ scores }) {
     );
   }
 
+  // ============ BOOTH ============
   const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   const isCameraStage = boothStep === 'camera' || boothStep === 'countdown';
 
