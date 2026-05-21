@@ -24,23 +24,176 @@ const STAT_DEFS = [
   { key: 'music', label: 'Music Aura', icon: '🎶' }
 ];
 
+// Each filter has BOTH a CSS string (for live preview) AND a JS pixel function
+// (for the captured photo, since mobile browsers ignore ctx.filter)
 const FILTERS = [
-  { key: 'none',     label: 'Au naturel', emoji: '✨', css: 'none' },
-  { key: 'dreamy',   label: 'Dreamy',     emoji: '☁️', css: 'saturate(1.3) contrast(0.95) brightness(1.1)' },
-  { key: 'vintage',  label: 'Vintage',    emoji: '📸', css: 'sepia(0.55) contrast(1.05) brightness(1.05) saturate(1.2)' },
-  { key: 'noir',     label: 'Noir',       emoji: '🎬', css: 'grayscale(1) contrast(1.3) brightness(0.95)' },
-  { key: 'sunset',   label: 'Sunset',     emoji: '🌅', css: 'sepia(0.3) saturate(1.6) hue-rotate(-15deg) brightness(1.1)' },
-  { key: 'kawaii',   label: 'Kawaii',     emoji: '🌸', css: 'saturate(1.4) hue-rotate(330deg) brightness(1.15) contrast(0.95)' },
-  { key: 'cyber',    label: 'Cyber',      emoji: '🌀', css: 'saturate(2) hue-rotate(180deg) contrast(1.2)' },
-  { key: 'cursed',   label: 'Cursed',     emoji: '👁️', css: 'hue-rotate(90deg) saturate(3) contrast(1.4) invert(0.1)' }
+  {
+    key: 'none', label: 'Au naturel', emoji: '✨',
+    css: 'none',
+    apply: null
+  },
+  {
+    key: 'dreamy', label: 'Dreamy', emoji: '☁️',
+    css: 'saturate(1.3) contrast(0.95) brightness(1.1)',
+    apply: (d) => {
+      for (let i = 0; i < d.length; i += 4) {
+        // Brightness *1.1, contrast *0.95, saturate *1.3
+        let r = d[i], g = d[i+1], b = d[i+2];
+        r *= 1.1; g *= 1.1; b *= 1.1;
+        r = (r - 128) * 0.95 + 128;
+        g = (g - 128) * 0.95 + 128;
+        b = (b - 128) * 0.95 + 128;
+        const gray = 0.3*r + 0.59*g + 0.11*b;
+        r = gray + (r - gray) * 1.3;
+        g = gray + (g - gray) * 1.3;
+        b = gray + (b - gray) * 1.3;
+        d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
+      }
+    }
+  },
+  {
+    key: 'vintage', label: 'Vintage', emoji: '📸',
+    css: 'sepia(0.55) contrast(1.05) brightness(1.05) saturate(1.2)',
+    apply: (d) => {
+      for (let i = 0; i < d.length; i += 4) {
+        let r = d[i], g = d[i+1], b = d[i+2];
+        // Sepia 55%
+        const tr = 0.393*r + 0.769*g + 0.189*b;
+        const tg = 0.349*r + 0.686*g + 0.168*b;
+        const tb = 0.272*r + 0.534*g + 0.131*b;
+        r = r * 0.45 + tr * 0.55;
+        g = g * 0.45 + tg * 0.55;
+        b = b * 0.45 + tb * 0.55;
+        // Brightness 1.05
+        r *= 1.05; g *= 1.05; b *= 1.05;
+        // Contrast 1.05
+        r = (r - 128) * 1.05 + 128;
+        g = (g - 128) * 1.05 + 128;
+        b = (b - 128) * 1.05 + 128;
+        d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
+      }
+    }
+  },
+  {
+    key: 'noir', label: 'Noir', emoji: '🎬',
+    css: 'grayscale(1) contrast(1.3) brightness(0.95)',
+    apply: (d) => {
+      for (let i = 0; i < d.length; i += 4) {
+        const gray = 0.3*d[i] + 0.59*d[i+1] + 0.11*d[i+2];
+        let v = gray * 0.95;
+        v = (v - 128) * 1.3 + 128;
+        d[i] = d[i+1] = d[i+2] = clamp(v);
+      }
+    }
+  },
+  {
+    key: 'sunset', label: 'Sunset', emoji: '🌅',
+    css: 'sepia(0.3) saturate(1.6) hue-rotate(-15deg) brightness(1.1)',
+    apply: (d) => {
+      for (let i = 0; i < d.length; i += 4) {
+        let r = d[i], g = d[i+1], b = d[i+2];
+        // Light sepia 30%
+        const tr = 0.393*r + 0.769*g + 0.189*b;
+        const tg = 0.349*r + 0.686*g + 0.168*b;
+        const tb = 0.272*r + 0.534*g + 0.131*b;
+        r = r * 0.7 + tr * 0.3;
+        g = g * 0.7 + tg * 0.3;
+        b = b * 0.7 + tb * 0.3;
+        // Warm shift (approximating hue-rotate(-15deg))
+        r *= 1.15; b *= 0.9;
+        // Brightness 1.1
+        r *= 1.1; g *= 1.1; b *= 1.1;
+        // Saturate 1.6
+        const gray = 0.3*r + 0.59*g + 0.11*b;
+        r = gray + (r - gray) * 1.6;
+        g = gray + (g - gray) * 1.6;
+        b = gray + (b - gray) * 1.6;
+        d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
+      }
+    }
+  },
+  {
+    key: 'kawaii', label: 'Kawaii', emoji: '🌸',
+    css: 'saturate(1.4) hue-rotate(330deg) brightness(1.15) contrast(0.95)',
+    apply: (d) => {
+      for (let i = 0; i < d.length; i += 4) {
+        let r = d[i], g = d[i+1], b = d[i+2];
+        // Pink shift (approximating hue-rotate(330deg) which is -30deg)
+        r = r * 1.1 + 10;
+        b = b * 1.05 + 5;
+        // Brightness 1.15
+        r *= 1.15; g *= 1.15; b *= 1.15;
+        // Contrast 0.95
+        r = (r - 128) * 0.95 + 128;
+        g = (g - 128) * 0.95 + 128;
+        b = (b - 128) * 0.95 + 128;
+        // Saturate 1.4
+        const gray = 0.3*r + 0.59*g + 0.11*b;
+        r = gray + (r - gray) * 1.4;
+        g = gray + (g - gray) * 1.4;
+        b = gray + (b - gray) * 1.4;
+        d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
+      }
+    }
+  },
+  {
+    key: 'cyber', label: 'Cyber', emoji: '🌀',
+    css: 'saturate(2) hue-rotate(180deg) contrast(1.2)',
+    apply: (d) => {
+      for (let i = 0; i < d.length; i += 4) {
+        let r = d[i], g = d[i+1], b = d[i+2];
+        // Hue rotate 180deg = swap warm/cool (approximate by swapping R<->B emphasis)
+        const newR = b;
+        const newB = r;
+        r = newR; b = newB;
+        // Contrast 1.2
+        r = (r - 128) * 1.2 + 128;
+        g = (g - 128) * 1.2 + 128;
+        b = (b - 128) * 1.2 + 128;
+        // Saturate 2
+        const gray = 0.3*r + 0.59*g + 0.11*b;
+        r = gray + (r - gray) * 2;
+        g = gray + (g - gray) * 2;
+        b = gray + (b - gray) * 2;
+        d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
+      }
+    }
+  },
+  {
+    key: 'cursed', label: 'Cursed', emoji: '👁️',
+    css: 'hue-rotate(90deg) saturate(3) contrast(1.4) invert(0.1)',
+    apply: (d) => {
+      for (let i = 0; i < d.length; i += 4) {
+        let r = d[i], g = d[i+1], b = d[i+2];
+        // Hue rotate 90deg approx: R->G, G->B, B->R cycle
+        const nr = b, ng = r, nb = g;
+        r = nr; g = ng; b = nb;
+        // Invert 10%
+        r = r * 0.9 + (255 - r) * 0.1;
+        g = g * 0.9 + (255 - g) * 0.1;
+        b = b * 0.9 + (255 - b) * 0.1;
+        // Contrast 1.4
+        r = (r - 128) * 1.4 + 128;
+        g = (g - 128) * 1.4 + 128;
+        b = (b - 128) * 1.4 + 128;
+        // Saturate 3
+        const gray = 0.3*r + 0.59*g + 0.11*b;
+        r = gray + (r - gray) * 3;
+        g = gray + (g - gray) * 3;
+        b = gray + (b - gray) * 3;
+        d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
+      }
+    }
+  }
 ];
+
+const clamp = (v) => Math.max(0, Math.min(255, v));
 
 export default function Ending({ scores }) {
   const [phase, setPhase] = useState('lighting');
   const [lineIdx, setLineIdx] = useState(0);
 
-  // Booth state
-  const [boothStep, setBoothStep] = useState('camera'); // 'camera' | 'countdown' | 'postcard'
+  const [boothStep, setBoothStep] = useState('camera');
   const [filter, setFilter] = useState(FILTERS[0]);
   const [countdown, setCountdown] = useState(3);
   const [photoDataUrl, setPhotoDataUrl] = useState(null);
@@ -52,7 +205,6 @@ export default function Ending({ scores }) {
   const streamRef = useRef(null);
   const postcardRef = useRef(null);
 
-  // Initial cake + music + confetti
   useEffect(() => {
     Sound.startEndingMusic();
     Sound.layerAdd();
@@ -79,7 +231,6 @@ export default function Ending({ scores }) {
     };
   }, []);
 
-  // Final-line typewriter
   useEffect(() => {
     if (phase !== 'message') return;
     if (lineIdx >= FINAL_LINES.length) return;
@@ -101,15 +252,34 @@ export default function Ending({ scores }) {
     return () => clearTimeout(t);
   }, [phase, lineIdx]);
 
-  // Start camera when entering booth
+  // Start camera when entering booth (and re-attach on retake)
   useEffect(() => {
     if (phase === 'booth' && boothStep === 'camera') {
-      startCamera();
+      // If we still have a live stream, just re-attach it (retake case)
+      if (streamRef.current && videoRef.current) {
+        attachStream();
+      } else {
+        startCamera();
+      }
     }
     return () => {
       if (phase !== 'booth') stopCamera();
     };
   }, [phase, boothStep]);
+
+  const attachStream = async () => {
+    const video = videoRef.current;
+    if (!video || !streamRef.current) return;
+
+    video.srcObject = streamRef.current;
+
+    // iOS Safari needs explicit play() after re-attaching
+    try {
+      await video.play();
+    } catch (err) {
+      console.warn('video.play() rejected:', err);
+    }
+  };
 
   const startCamera = async () => {
     try {
@@ -120,6 +290,11 @@ export default function Ending({ scores }) {
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        try {
+          await videoRef.current.play();
+        } catch (err) {
+          console.warn('video.play() rejected:', err);
+        }
       }
       setCameraError(null);
     } catch (err) {
@@ -145,7 +320,6 @@ export default function Ending({ scores }) {
     setCountdown(3);
   };
 
-  // Countdown ticker
   useEffect(() => {
     if (boothStep !== 'countdown') return;
     if (countdown <= 0) {
@@ -170,34 +344,32 @@ export default function Ending({ scores }) {
     const sx = (vw - minDim) / 2;
     const sy = (vh - minDim) / 2;
 
-    // Draw mirrored video first, no filter
+    // Mirror + draw video
     ctx.save();
     ctx.translate(size, 0);
     ctx.scale(-1, 1);
     ctx.drawImage(video, sx, sy, minDim, minDim, 0, 0, size, size);
     ctx.restore();
 
-    // Apply filter via temp canvas (more reliable than transform+filter combo)
-    if (filter.css && filter.css !== 'none') {
-      const temp = document.createElement('canvas');
-      temp.width = size;
-      temp.height = size;
-      temp.getContext('2d').drawImage(canvas, 0, 0);
-
-      ctx.clearRect(0, 0, size, size);
-      ctx.filter = filter.css;
-      ctx.drawImage(temp, 0, 0);
-      ctx.filter = 'none';
+    // Apply JS-based pixel filter (works on all browsers including mobile)
+    if (filter.apply) {
+      try {
+        const imageData = ctx.getImageData(0, 0, size, size);
+        filter.apply(imageData.data);
+        ctx.putImageData(imageData, 0, 0);
+      } catch (err) {
+        console.warn('Filter application failed:', err);
+      }
     }
 
     const dataUrl = canvas.toDataURL('image/png');
     console.log('Captured photo size:', dataUrl.length, 'bytes');
 
     setPhotoDataUrl(dataUrl);
-    stopCamera();
     Sound.fanfare();
     burst(window.innerWidth / 2, window.innerHeight / 2, { count: 50, power: 1 });
     setBoothStep('postcard');
+    // Note: we DON'T stopCamera here, so retake can reuse the stream
   };
 
   const capturePhoto = () => {
@@ -209,15 +381,16 @@ export default function Ending({ scores }) {
       return;
     }
 
-    // If video isn't ready, attempt recovery
     if (!video.videoWidth || !video.videoHeight) {
       console.warn('Video not ready, attempting recovery. videoWidth:', video.videoWidth);
       if (streamRef.current && !video.srcObject) {
         video.srcObject = streamRef.current;
+        video.play().catch(() => {});
       }
       setTimeout(() => {
-        if (videoRef.current && videoRef.current.videoWidth && videoRef.current.videoHeight) {
-          doCapture(videoRef.current);
+        const v = videoRef.current;
+        if (v && v.videoWidth && v.videoHeight) {
+          doCapture(v);
         } else {
           console.error('Video still not ready, going to postcard without photo');
           setBoothStep('postcard');
@@ -403,7 +576,6 @@ export default function Ending({ scores }) {
     );
   }
 
-  // ============ BOOTH ============
   const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   const isCameraStage = boothStep === 'camera' || boothStep === 'countdown';
 
